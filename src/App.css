@@ -1,0 +1,14 @@
+.App {
+  text-align: center;
+}
+
+body {
+  background-color: #BFB2CA;
+}
+
+@media (orientation: landscape) {
+  .sized-card {
+    width: 70vh;
+  }
+}
+
