@@ -1,7 +1,8 @@
 {
     "root": "build/",
     "routes": {
-      "/dne": "index.html"
+      "/dne": "index.html",
+      "/**": "404.html"
     }
   }
   
