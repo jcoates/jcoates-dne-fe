@@ -4,7 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import InfoIcon from '@material-ui/icons/Info';
 import IconButton from '@material-ui/core/IconButton';
+import InfoPaper from './InfoPaper.js';
 
 const styles = ({
   card: {
@@ -13,7 +15,7 @@ const styles = ({
       maxHeight: '80%',
       maxWidth: '80%',
       marginTop: '5vh',
-      marginBottom: '5'
+      marginBottom: '5vh'
   },
   media: {
       height: 'auto',
@@ -27,22 +29,52 @@ const styles = ({
     height: '5vh',
     width: '5vh',
   },
+  infoIcon: {
+    height: '5vh',
+    width: '5vh',
+  },
 });
+
+
+function MainContent(props) {
+  const infoOpen = props.infoOpen;
+  const currentImage = props.currentImage;
+
+  if (infoOpen) {
+    return <InfoPaper/>
+  } else {
+    return <CardMedia
+      component="img"
+      alt="JCoates"
+      image={currentImage}
+      title="JCoates"
+    />
+  }
+}
 
 class ImgMediaCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: ''
+      image: '',
+      infoOpen: false,
     };
   }
 
+  async handleInfo() {
+    if (this.state.infoOpen) {
+      await this.handleRefresh();
+      this.setState({image: this.state.image, infoOpen: false});
+    } else {
+      this.setState({image: this.state.image, infoOpen: true});
+    }
+  }
+
   async handleRefresh() {
-    const jsonResponse = await fetch('http://127.0.0.1:5000/dne').then((response) => {
+    const jsonResponse = await fetch('https://frozen-fortress-19650.herokuapp.com/dne').then((response) => {
       return response.json();
     });
-
-    this.setState({image: jsonResponse['image_url']});
+    this.setState({image: jsonResponse['image_url'], infoOpen: false });
   };
 
   componentDidMount() {
@@ -53,15 +85,13 @@ class ImgMediaCard extends React.Component {
     const { classes } = this.props;
     return (
       <Card className={`sized-card ${classes.card}`}>
-          <CardMedia
-            component="img"
-            alt="JCoates"
-            image={this.state.image}
-            title="JCoates"
-          />
+        <MainContent infoOpen={this.state.infoOpen} currentImage={this.state.image}/>
         <div className={classes.controls}>
             <IconButton aria-label="Regenerate" onClick={this.handleRefresh.bind(this)}>
               <RefreshIcon className={classes.refreshIcon}/>
+            </IconButton>
+            <IconButton aria-label="Info" onClick={this.handleInfo.bind(this)}>
+              <InfoIcon className={classes.infoIcon}/>
             </IconButton>
           </div>
       </Card>
